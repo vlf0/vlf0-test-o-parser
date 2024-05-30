@@ -1,4 +1,3 @@
-from pathlib import Path
 import environ
 
 root = environ.Path(__file__) - 3
@@ -7,14 +6,11 @@ environ.Env.read_env()
 
 SITE_ROOT = root()
 
-# Build paths inside the project like this: BASE_DIR / 'subdir'.
-BASE_DIR = Path(__file__).resolve().parent.parent
-
 SECRET_KEY = env.str('SECRET_KEY')
 
 DEBUG = env.bool('DEBUG', default=False)
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['localhost']
 
 
 INSTALLED_APPS = [
@@ -39,6 +35,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
+
 ROOT_URLCONF = 'test_parser.urls'
 
 TEMPLATES = [
@@ -59,9 +56,9 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'test_parser.wsgi.application'
 
-# DATABASES = {
-#     'default': {env.db()}
-# }
+DATABASES = {
+    'default': env.db('MYSQLDB_URL')
+}
 
 AUTH_PASSWORD_VALIDATORS = [
     {
@@ -84,7 +81,7 @@ AUTH_USER_MODEL = 'users.CustomUser'
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Europe/Moscow'
 
 USE_I18N = True
 
@@ -96,3 +93,7 @@ USE_TZ = True
 STATIC_URL = '/static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+CELERY_BROKER_URL = env.str('BROKER_URL')
+CELERY_RESULT_BACKEND = env.str('RESULT_URL')
+CELERY_TIMEZONE = 'Europe/Moscow'

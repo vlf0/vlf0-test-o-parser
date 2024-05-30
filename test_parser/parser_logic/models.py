@@ -1,3 +1,14 @@
 from django.db import models
 
-# Create your models here.
+
+class ParsedData(models.Model):
+
+    name = models.CharField(max_length=255)
+    price = models.IntegerField()
+    description = models.CharField(max_length=255)
+    image_url = models.URLField()
+    discount = models.CharField(max_length=4)
+
+    def __str__(self):
+        return (f'Name: {self.name}, price: {self.price}, description: {self.description},'
+                f' image_url: {self.image_url}, discount: {self.discount}')
