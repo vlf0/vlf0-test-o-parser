@@ -39,24 +39,24 @@ class OzonHTMLParser:
                                                      " (KHTML, like Gecko) Chrome/91.0.4272.124 Safari/537.36")
             page = context.new_page()
             page.set_default_timeout(90000)
-            while self.selector != '#reload-button':
-                page.goto(self.url)
-                time.sleep(1)
-                if page.url == self.antibot_link:
-                    self.selector = '#reload-button'
-            try:
-                page.click(self.selector)
-                time.sleep(3)
-                page.wait_for_load_state()
-            except Exception as e:
-                print(f"Error clicking reload button: {e}")
-                browser.close()
-                return
+
+            page.goto(self.url)
+            time.sleep(2)
+            if page.url == self.antibot_link:
+                self.selector = '#reload-button'
+                try:
+                    page.click(self.selector)
+                    time.sleep(3)
+                    page.wait_for_load_state()
+                except Exception as e:
+                    print(f"Error clicking reload button: {e}")
+                    browser.close()
+                    return
 
             main_content = page.content()
             browser.close()
 
-            tags_content = self.get_tag(main_content, name='div', class_='q7j').contents
+            tags_content = self.get_tag(main_content, name='div', class_='q7j_23').contents
             tags = [tag for tag in tags_content if isinstance(tag, bs4.element.Tag)]
 
             for child in tags[:self.obj_amount]:
@@ -80,6 +80,4 @@ class OzonHTMLParser:
             serializer = ParsingSerializer(data=product)
             if serializer.is_valid():
                 serializer.save()
-
-
 
