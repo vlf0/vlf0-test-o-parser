@@ -1,6 +1,8 @@
 import sys
 import asyncio
 import logging
+
+import aiohttp
 from dotenv import dotenv_values
 from aiogram.client.default import DefaultBotProperties
 from aiogram.enums import ParseMode
@@ -18,24 +20,33 @@ bot = Bot(token=TOKEN, default=DefaultBotProperties(parse_mode=ParseMode.MARKDOW
 dp = Dispatcher()
 
 
-@dp.message(filters.CommandStart())
+@dp.message(filters.Command('notifications'))
 async def update_ids(message: types.Message) -> None:
     b_data = await redis.get('ids')
     if b_data is not None:
         ids_list = b_data.decode('UTF-8').split(' ')
         if str(message.from_user.id) not in ids_list:
             await redis.append('ids', f' {message.from_user.id}')
-            await message.answer('your id added.', parse_mode='')
+            await message.answer('Your ID added. You will get notifications when task will executed.',
+                                 parse_mode='')
             return
-        await message.answer('your id already exist.', parse_mode='')
+        await message.answer('Your ID already exist. You will get notifications when task will executed.',
+                             parse_mode='')
         return
     await redis.set('ids', message.from_user.id)
-    await message.answer('your id added.', parse_mode='')
+    await message.answer('Your ID added. You will get notifications when task will executed.', parse_mode='')
 
 
-@dp.message(filters.Command('get'))
+@dp.message(filters.CommandStart())
 async def get_last_parsing_data(message: types.Message) -> None:
-    await message.answer('GET command')
+    api_url = "http://localhost:8000/api/v1/parsed_data/"
+    async with aiohttp.ClientSession() as session:
+        async with session.get(api_url) as response:
+            if response.status == 200:
+                data = await response.json()
+                await message.answer(f"Data from API: {data}", parse_mode='')
+            else:
+                await message.answer(f"Failed to get data from API. Status: {response.status}", parse_mode='')
 
 
 async def main() -> None:

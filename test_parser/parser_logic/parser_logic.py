@@ -12,7 +12,6 @@ class OzonHTMLParser:
         self.obj_amount = obj_amount
         self.url = 'https://www.ozon.ru/seller/proffi-1/products/?miniapp=seller_1'
         self.antibot_link = self.url + '&__rr=1'
-        self.selector = ''
         self.parsed_objects = []
         self.product_links = []
         self.descriptions = []
@@ -43,9 +42,9 @@ class OzonHTMLParser:
             page.goto(self.url)
             time.sleep(2)
             if page.url == self.antibot_link:
-                self.selector = '#reload-button'
+                selector = '#reload-button'
                 try:
-                    page.click(self.selector)
+                    page.click(selector)
                     time.sleep(3)
                     page.wait_for_load_state()
                 except Exception as e:
@@ -53,16 +52,20 @@ class OzonHTMLParser:
                     browser.close()
                     return
 
-            main_content = page.content()
+            content = page.content()
             browser.close()
 
-            tags_content = self.get_tag(main_content, name='div', class_='q7j_23').contents
-            tags = [tag for tag in tags_content if isinstance(tag, bs4.element.Tag)]
+            ozon_tag = self.get_tag(content, 'div', id='__ozon')
+            shop_container = ozon_tag.footer.previous_sibling
+            products_column = shop_container.next.next.next.next_sibling.next.next_sibling.next_sibling.next
+            products_widget = products_column.next.next.next.next
 
-            for child in tags[:self.obj_amount]:
+            products_tags = [tag for tag in products_widget if isinstance(tag, bs4.element.Tag)]
+
+            for child in products_tags[:self.obj_amount]:
                 product_text = child.a.next_sibling.next_sibling
                 cost = (product_text.div.div.span.string.replace('\u2009', '')).rstrip('₽')
-                discount = (product_text.div.div.span.next_sibling.next_sibling.get_text()).lstrip('-')
+                discount = (product_text.div.div.span.next_sibling.next_sibling.get_text()).lstrip('−')
                 name = product_text.a.string
                 img_link = child.img['src']
                 self.product_links.append(child.a['href'])
