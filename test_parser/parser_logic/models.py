@@ -12,3 +12,7 @@ class ParsedData(models.Model):
     def __str__(self):
         return (f'Name: {self.name}, price: {self.price}, description: {self.description},'
                 f' image_url: {self.image_url}, discount: {self.discount}')
+
+    class Meta:
+        verbose_name = 'OZON товар'
+        verbose_name_plural = 'Товары OZON\'a'
