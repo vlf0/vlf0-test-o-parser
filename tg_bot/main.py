@@ -39,7 +39,7 @@ async def update_ids(message: types.Message) -> None:
 
 @dp.message(filters.CommandStart())
 async def get_last_parsing_data(message: types.Message) -> None:
-    api_url = "http://localhost:8000/api/v1/parsed_data/"
+    api_url = "http://parser:8000/api/v1/parsed_data/"
     async with aiohttp.ClientSession() as session:
         async with session.get(api_url) as response:
             if response.status == 200:

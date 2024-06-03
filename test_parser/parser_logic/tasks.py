@@ -8,7 +8,7 @@ def parse(product_amount):
     try:
         parser = OzonHTMLParser(product_amount)
         parser.save_to_db()
-        response = httpx.post(f"http://localhost:9000/send-notification/", json={"product_amount": product_amount})
+        response = httpx.post(f"http://bot:9000/send-notification/", json={"product_amount": product_amount})
         response.raise_for_status()
         return True
     except Exception as e:

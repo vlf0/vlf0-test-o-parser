@@ -1,0 +1,44 @@
+version: '3'
+
+services:
+  database:
+    build: ./mysqldb/.
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+    ports:
+      - "3307:3306"
+    networks:
+      - one_net
+    restart: always
+  redis:
+    build: ./redis/.
+    ports:
+      - "6379:6379"
+    networks:
+      - one_net
+    restart: always
+  parser:
+    volumes:
+      - ./test_parser/test_parser/.env:/usr/src/parser/test_parser/.env
+    build: ./test_parser/.
+    ports:
+      - "8000:8000"
+    depends_on:
+      - database
+      - redis
+    networks:
+      - one_net
+    restart: always
+  bot:
+    build: ./tg_bot/
+    volumes:
+      - ./tg_bot/.env:/usr/src/tg_bot/.env
+    depends_on:
+      - database
+      - redis
+    networks:
+      - one_net
+networks:
+  one_net:
+    driver: bridge
+

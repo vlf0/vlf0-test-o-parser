@@ -1,6 +1,5 @@
 from .serializers import CountSerializer
 from .tasks import parse
-import aioredis
 
 
 class TasksManager:
