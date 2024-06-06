@@ -2,7 +2,7 @@ from rest_framework.response import Response
 from rest_framework import viewsets, status
 from drf_yasg import openapi
 from drf_yasg.utils import swagger_auto_schema
-from .serializers import ParsingSerializer, CountSerializer
+from .serializers import CountSerializer, ParsingSerializer, ParsingSerializerLink
 from .models import ParsedData
 from .tasks_manager import TasksManager
 
@@ -42,6 +42,8 @@ class ParsedDataViewSet(viewsets.ModelViewSet):
     def list(self, request, *args, **kwargs):
         queryset = ParsedData.objects.all()[:task_manager.product_amount]
         serializer = self.get_serializer(queryset, many=True)
+        if request.headers.get('User-Agent', None) == 'Python/3.9 aiohttp/3.9.5':
+            serializer = ParsingSerializerLink(queryset, many=True)
         return Response({'output': serializer.data})
 
 
