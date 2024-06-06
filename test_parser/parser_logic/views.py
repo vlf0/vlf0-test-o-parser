@@ -1,6 +1,8 @@
 from rest_framework.response import Response
 from rest_framework import viewsets, status
-from .serializers import ParsingSerializer
+from drf_yasg import openapi
+from drf_yasg.utils import swagger_auto_schema
+from .serializers import CountSerializer, ParsingSerializer, ParsingSerializerLink
 from .models import ParsedData
 from .tasks_manager import TasksManager
 
@@ -11,6 +13,9 @@ class ParserRunnerViewSet(viewsets.ViewSet):
 
     http_method_names = ['post']
 
+    @swagger_auto_schema(operation_summary='run parsing task',
+                         responses={200: 'Parser starting success', 400: 'Invalid input'},
+                         query_serializer=CountSerializer)
     def create(self, request):
         task_manager.request = request
         if task_manager.parser_task():
@@ -22,9 +27,23 @@ class ParsedDataViewSet(viewsets.ModelViewSet):
 
     http_method_names = ['get']
     serializer_class = ParsingSerializer
+    user_response = openapi.Response('response description', ParsingSerializer)
 
-    def get_queryset(self):
+    @swagger_auto_schema(operation_summary='get one of parsed products by ID',
+                         responses={200: user_response, 500: 'Server error'})
+    def retrieve(self, request, *args, **kwargs):
+        pk = kwargs.get('pk', None)
+        queryset = ParsedData.objects.filter(pk=pk)
+        serializer = self.get_serializer(queryset, many=True)
+        return Response({'output': serializer.data})
+
+    @swagger_auto_schema(operation_summary='get list of parsed products',
+                         responses={200: 'OK', 500: 'Server error'})
+    def list(self, request, *args, **kwargs):
         queryset = ParsedData.objects.all()[:task_manager.product_amount]
-        return queryset
+        serializer = self.get_serializer(queryset, many=True)
+        if request.headers.get('User-Agent', None) == 'Python/3.9 aiohttp/3.9.5':
+            serializer = ParsingSerializerLink(queryset, many=True)
+        return Response({'output': serializer.data})
 
 

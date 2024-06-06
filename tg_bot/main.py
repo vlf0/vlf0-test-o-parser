@@ -1,7 +1,6 @@
 import sys
 import asyncio
 import logging
-
 import aiohttp
 from dotenv import dotenv_values
 from aiogram.client.default import DefaultBotProperties
@@ -44,16 +43,31 @@ async def get_last_parsing_data(message: types.Message) -> None:
         async with session.get(api_url) as response:
             if response.status == 200:
                 data = await response.json()
-                await message.answer(f"Data from API: {data}", parse_mode='')
+                products_list = data['output']
+                counter = 0
+                product_number = 1
+                text_answer = ''
+                for product in products_list:
+                    processed_product = (f'№{product_number}\n\nНазвание: {product["name"]}\n\n'
+                                         f'ссылка: {product["link"]}\n')
+                    text_answer += processed_product
+                    counter += 1
+                    product_number += 1
+                    if counter == 5:
+                        await message.answer(f'Данные парсера:\n{text_answer}', parse_mode='')
+                        counter = 0
+                        text_answer = ''
+                if text_answer:
+                    await message.answer(f'\n{text_answer}', parse_mode='')
             else:
-                await message.answer(f"Failed to get data from API. Status: {response.status}", parse_mode='')
+                await message.answer(f'Failed to get data from API. Status: {response.status}', parse_mode='')
 
 
 async def main() -> None:
     await dp.start_polling(bot)
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     logging.basicConfig(level=logging.INFO, stream=sys.stdout)
     asyncio.run(main())
 
