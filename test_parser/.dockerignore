@@ -17,4 +17,5 @@ coverage.xml
 .mypy_cache
 .pytest_cache
 
-/test_parser/.env
+test_parser/.env
+test_parser/example.env

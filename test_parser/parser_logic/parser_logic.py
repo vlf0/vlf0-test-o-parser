@@ -233,11 +233,12 @@ class OzonHTMLParser:
         After parsing is merging main dict and descriptions alongside.
         This dict will save in class object attribute "parsed_objects".
         """
-        self.get_browser(self.get_pages_content)
-        self.parse_main_part()
-        self.get_browser(self.get_detail_pages_content)
-        self.parse_descriptions()
-        self.add_descriptions()
+        with Display(backend="xvfb", size=(100, 60)):
+            self.get_browser(self.get_pages_content)
+            self.parse_main_part()
+            self.get_browser(self.get_detail_pages_content)
+            self.parse_descriptions()
+            self.add_descriptions()
 
     def create_products_list(self, tags: Union[list, bs4.element.Tag], amount: int) -> None:
         """
