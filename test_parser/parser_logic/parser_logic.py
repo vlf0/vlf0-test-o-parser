@@ -270,8 +270,3 @@ class OzonHTMLParser:
             serializer = BaseParsingSerializer(data=product)
             if serializer.is_valid(raise_exception=True):
                 serializer.save()
-
-
-o = OzonHTMLParser(15)
-o.parse_it()
-print(o.main_dict)
