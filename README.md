@@ -39,7 +39,7 @@ via GET request. It will return whole list of products in JSON format:
 ```
 [get list products API](http://localhost:8000/api/v1/parsed_data) - return all products.
 [get single product API](http://localhost:8000/api/v1/parsed_data) - return one product by id.
-_API endpoints also have been described via Swagger._
+_API endpoints also have been described via Swagger - [Swagger](http://localhost:8000/swagger/)._
 ___
 ## Stack:
 #### - MySQL 8.4
@@ -57,8 +57,8 @@ ___
 
 </div>
 
-:exclamation: __You need have installed git and docker desktop on machine where will run the project.
-If you don't have - please install it first. :exclamation: Docker Desktop should be started.__
+:exclamation: __You need have installed _Git, Docker and Docker-Compose_ on machine where will run the project.
+If you don't have - please install it first. :exclamation: Docker should be running.__
 
 1. Clone the project into needed directory:
 
@@ -66,3 +66,8 @@ If you don't have - please install it first. :exclamation: Docker Desktop should
 2. Create file named `.env` in each directory where is `example.env` and fill them yourself data.
 3. Go to project root and run command:
     `docker-compose up`
+
+___
+
+Screencast from Django admin panel placed in the project root named _"parser_admin_panel"_. 
+You can also [see video on YouTube (0:19)](https://youtu.be/qmhtJGehcZw) 

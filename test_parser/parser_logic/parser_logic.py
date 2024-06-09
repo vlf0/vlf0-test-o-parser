@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from typing import Union
+import random
 from .serializers import BaseParsingSerializer
 from playwright.sync_api import sync_playwright
 from pyvirtualdisplay import Display
@@ -54,8 +55,17 @@ class OzonHTMLParser:
         self.product_links = []
         self.descriptions = []
         self.text_descriptions = []
-        self.user_agent = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36' \
-                          ' (KHTML, like Gecko) Chrome/91.0.4272.124 Safari/537.36'
+        self.user_agents = [
+                           'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:89.0) Gecko/20100101 Firefox/89.0',
+                           'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
+                           ' (KHTML, like Gecko) Chrome/91.0.864.59 Safari/537.36 Edg/91.0.864.59',
+                           'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15'
+                           ' (KHTML, like Gecko) Version/14.1.1 Safari/605.1.15',
+                           'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
+                           ' (KHTML, like Gecko) Chrome/90.0.4430.212 Safari/537.36 OPR/76.0.4017.177',
+                           'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
+                           ' (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36 Vivaldi/4.0'
+                           ]
 
     @staticmethod
     def get_tag(content: str, name: str, **kwargs) -> bs4.element.Tag:
@@ -90,7 +100,8 @@ class OzonHTMLParser:
         :param browser_obj: The browser instance.
         :return: The newly created page.
         """
-        context = browser_obj.new_context(user_agent=self.user_agent)
+        user_agent = random.choice(self.user_agents)
+        context = browser_obj.new_context(user_agent=user_agent)
         page = context.new_page()
         return page
 
@@ -149,7 +160,7 @@ class OzonHTMLParser:
         for page_number in pages:
             if pages.index(page_number) == 0:
                 page.goto(self.shop_url)
-                while page.url == self.antibot_link:
+                if page.url == self.antibot_link:
                     try:
                         reload_btn = page.get_by_role('button', name='Обновить')
                         reload_btn.wait_for()
