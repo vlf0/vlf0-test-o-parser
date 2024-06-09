@@ -149,7 +149,7 @@ class OzonHTMLParser:
         for page_number in pages:
             if pages.index(page_number) == 0:
                 page.goto(self.shop_url)
-                if page.url == self.antibot_link:
+                while page.url == self.antibot_link:
                     try:
                         reload_btn = page.get_by_role('button', name='Обновить')
                         reload_btn.wait_for()

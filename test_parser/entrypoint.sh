@@ -1,5 +1,6 @@
 #!/bin/sh
 which xvfb-run
+python3 manage.py check_database && \
 python3 manage.py makemigrations
 python3 manage.py migrate
 export DJANGO_SUPERUSER_USERNAME=admin

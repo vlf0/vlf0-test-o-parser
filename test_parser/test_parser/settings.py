@@ -80,9 +80,10 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+LOGOUT_REDIRECT_URL = '/admin/login/'
+
 # My custom user model
 AUTH_USER_MODEL = 'users.CustomUser'
-
 
 LANGUAGE_CODE = 'en-us'
 

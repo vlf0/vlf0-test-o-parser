@@ -1,9 +1,15 @@
 FROM mysql:8.4
 
+WORKDIR /var/lib/mysqldb
+
+RUN chmod 777 /var/lib/mysqldb/
+
 COPY ./config/my.cnf /etc/mysql/my.cnf
 
 RUN chmod 644 /etc/mysql/my.cnf
 
-COPY ./initdb.d/. /docker-entrypoint-initdb.d/.
+COPY init.sh .
 
-WORKDIR /var/vib/mysqldb
+COPY entrypoint.sh .
+
+ENTRYPOINT ["sh", "/var/lib/mysqldb/entrypoint.sh"]
